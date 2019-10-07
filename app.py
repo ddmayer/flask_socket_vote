@@ -1,15 +1,22 @@
 import os
 import requests
-
+from threading import Lock
 import string
 import random
 
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_socketio import SocketIO, emit, join_room, leave_room, close_room, rooms
 
+# Set this variable to "threading", "eventlet" or "gevent" to test the
+# different async modes, or leave it set to None for the application to choose
+# the best option based on installed packages.
+async_mode = None
+
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-socketio = SocketIO(app)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app, async_mode=async_mode)
+thread = None
+thread_lock = Lock()
 
 votes = {}
 
@@ -52,3 +59,6 @@ def vote(data):
     votes[room_code][selection] += 1
     emit("vote totals", votes[room_code], room_code=room_code)
     print(votes[room_code])
+
+if __name__ == '__main__':
+    socketio.run(app, debug=True)
