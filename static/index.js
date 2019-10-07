@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('button').forEach(button => {
             button.onclick = () => {
                 const selection = button.dataset.vote;
-                console.log(selection);
+                console.log(`Send: ${selection}`);
                 socket.emit('submit vote', {'room_code': room_code, 'selection': selection});
             };
         });
